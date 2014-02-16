@@ -405,6 +405,9 @@ type Config struct {
 	// SkipTLS, if true, causes the TLS handshake to be skipped.
 	// WARNING: this should only be used if Conn is already secure.
 	SkipTLS bool
+	// Optional resource
+	// if not specified it will requested from the server.
+	Resource string
 }
 
 // Dial creates a new connection to an XMPP server, authenticates as the
@@ -547,7 +550,12 @@ func Dial(address, user, domain, password string, config *Config) (c *Conn, err 
 	}
 
 	// Send IQ message asking to bind to the local user name.
-	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
+	if len(config.Resource) == 0 {
+		fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
+	} else {
+		fmt.Fprintf(c.out, "<iq type='set' id='bind_2'><bind xmlns='%s'><resource>%s</resource></bind></iq>", NsBind, config.Resource)
+	}
+
 	var iq ClientIQ
 	if err = c.in.DecodeElement(&iq, nil); err != nil {
 		return nil, errors.New("unmarshal <iq>: " + err.Error())
