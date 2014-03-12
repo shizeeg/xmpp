@@ -821,7 +821,8 @@ var defaultStorage = map[xml.Name]reflect.Type{
 	xml.Name{Space: NsSASL, Local: "failure"}:    reflect.TypeOf(saslFailure{}),
 	xml.Name{Space: NsBind, Local: "bind"}:       reflect.TypeOf(bindBind{}),
 	xml.Name{Space: NsClient, Local: "message"}:  reflect.TypeOf(ClientMessage{}),
-	xml.Name{Space: NsClient, Local: "presence"}: reflect.TypeOf(ClientPresence{}),
+	xml.Name{Space: NsClient, Local: "presence"}: reflect.TypeOf(MUCPresence{}),
+//	xml.Name{Space: NsClient, Local: "presence"}: reflect.TypeOf(ClientPresence{}),
 	xml.Name{Space: NsClient, Local: "iq"}:       reflect.TypeOf(ClientIQ{}),
 	xml.Name{Space: NsClient, Local: "error"}:    reflect.TypeOf(ClientError{}),
 }
