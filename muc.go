@@ -22,6 +22,7 @@ type Item struct {
 	Affiliation string `xml:"affiliation,attr,omitempty"`
 	// moderator, participant, visitor, none
 	Role string `xml:"role,attr,omitempty"`
+	JID  string `xml:"jid,attr,omitempty"`
 }
 
 type X struct {
