@@ -23,17 +23,33 @@ type Item struct {
 	// moderator, participant, visitor, none
 	Role string `xml:"role,attr,omitempty"`
 	JID  string `xml:"jid,attr,omitempty"`
+	Nick string `xml:"nick,attr,omitempty"`
 }
 
 type X struct {
 	XMLName  xml.Name `xml:"http://jabber.org/protocol/muc#user x"`
 	Items    []Item   `xml:"item,omitempty"`
 	Statuses []Status `xml:"status,omitempty"`
+	Decline  Reason   `xml:"decline,omitempty"`
+	Invite   Reason   `xml:"invite,omitempty"`
+	Destroy  XDestroy `xml:"destroy,omitempty"`
+	Password string   `xml:"password,omitempty"`
 }
 
 type Photo struct {
 	XMLName xml.Name `xml:"vcard-temp:x:update x"`
 	Photo   string   `xml:"photo,omitempty"`
+}
+
+type Reason struct {
+	From   string `xml:"from,attr,omitempty"`
+	To     string `xml:"to,attr,omitempty"`
+	Reason string `xml:"reason,omitempty"`
+}
+
+type XDestroy struct {
+	JID    string `xml:"jid,attr,omitempty"`
+	Reason string `xml:"reason,omitempty"`
 }
 
 // http://xmpp.org/extensions/xep-0045.html
