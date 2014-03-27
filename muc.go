@@ -2,6 +2,7 @@ package xmpp
 
 import (
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -12,14 +13,14 @@ const (
 )
 
 type Status struct {
-	XMLName xml.Name `xml:"status"`
-	Code    string   `xml:"code,attr"`
+	// XMLName xml.Name `xml:"status"`
+	Code string `xml:"code,attr"`
 }
 
 type Item struct {
-	XMLName xml.Name `xml:"item"`
+	// XMLName xml.Name `xml:"item"`
 	// owner, admin, member, outcast, none
-	Affiliation string `xml:"affiliation,attr,omitempty"`
+	Affil string `xml:"affiliation,attr,omitempty"`
 	// moderator, participant, visitor, none
 	Role string `xml:"role,attr,omitempty"`
 	JID  string `xml:"jid,attr,omitempty"`
@@ -70,6 +71,35 @@ type MUCPresence struct {
 	Priority string       `xml:"priority,omitempty"`
 	Caps     *ClientCaps  `xml:"c"`
 	Error    *ClientError `xml:"error"`
+}
+
+// IsCode checks if MUCPresence contains given code
+func (p *MUCPresence) IsCode(code string) bool {
+	if len(p.X) == 0 {
+		return false
+	}
+	for _, x := range p.X {
+		for _, xs := range x.Statuses {
+			if xs.Code == code {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (p *MUCPresence) GetAffilRole() (affil, role string, err error) {
+	if len(p.X) == 0 {
+		return "", "", errors.New("no <x /> subitem!")
+	}
+	for _, x := range p.X {
+		for _, xi := range x.Items {
+			affil = xi.Affil
+			role = xi.Role
+			return
+		}
+	}
+	return "", "", errors.New("no affil/role info")
 }
 
 // JoinMUC joins to a given conference with nick and optional password
