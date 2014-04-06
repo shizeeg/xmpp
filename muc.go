@@ -12,6 +12,13 @@ const (
 	NsMUCUser = "http://jabber.org/protocol/muc#user"
 )
 
+const (
+	SELF   = "110"
+	BAN    = "301"
+	RENAME = "303"
+	KICK   = "307"
+)
+
 type Status struct {
 	// XMLName xml.Name `xml:"status"`
 	Code string `xml:"code,attr"`
@@ -129,6 +136,25 @@ func (c *Conn) JoinMUC(to, nick, password string) error {
 		"\n</presence>",
 		xmlEscape(c.jid), xmlEscape(to), xmlEscape(nick), NsMUC)
 	_, err := fmt.Fprintf(c.out, stanza)
+	return err
+}
+
+func (c *Conn) DirectInviteMUC(to, jid, password, reason string) error {
+	if len(password) > 0 {
+		password = "password='" + password + "'"
+	}
+
+	if len(reason) > 0 {
+		reason = "reason='" + xmlEscape(reason) + "'"
+	}
+
+	invite := fmt.Sprintf("<message from='%s' to='%s'>"+
+		"<x xmlns='jabber:x:conference'"+
+		"\n jid='%s'"+
+		"\n "+password+
+		"\n "+reason+" /></message>",
+		xmlEscape(c.jid), xmlEscape(to), xmlEscape(jid))
+	_, err := fmt.Fprintf(c.out, invite)
 	return err
 }
 
