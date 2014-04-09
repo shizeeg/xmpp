@@ -139,6 +139,28 @@ func (c *Conn) JoinMUC(to, nick, password string) error {
 	return err
 }
 
+// LeaveMUC leaves the conference.
+func (c *Conn) LeaveMUC(confFullJID, status string) error {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	_, err := fmt.Fprintf(c.out,
+		"<presence from='%s' to='%s' type='unavailable'",
+		xmlEscape(c.jid), xmlEscape(confFullJID))
+
+	if err != nil {
+		return err
+	}
+	if len(status) > 0 {
+		_, err = fmt.Fprintf(c.out, ">"+
+			"<status>"+xmlEscape(status)+"</status>"+
+			"</presence>")
+		return err
+	}
+	_, err = fmt.Fprint(c.out, " />")
+	return err
+}
+
+// DirectInviteMUC sent invite http://xmpp.org/extensions/xep-0249.html
 func (c *Conn) DirectInviteMUC(to, jid, password, reason string) error {
 	if len(password) > 0 {
 		password = "password='" + password + "'"
