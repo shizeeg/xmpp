@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	NsMUC     = "http://jabber.org/protocol/muc"
-	NsMUCUser = "http://jabber.org/protocol/muc#user"
+	NsMUC       = "http://jabber.org/protocol/muc"
+	NsMUCUser   = "http://jabber.org/protocol/muc#user"
+	NsDiscoInfo = "http://jabber.org/protocol/disco#info"
 )
 
 const (
@@ -23,15 +24,21 @@ type Status struct {
 	// XMLName xml.Name `xml:"status"`
 	Code string `xml:"code,attr"`
 }
+type Actor struct {
+	Nick string `xml:"nick,attr,omitempty"`
+	JID  string `xml:"jid,attr,omitempty"`
+}
 
 type Item struct {
 	// XMLName xml.Name `xml:"item"`
 	// owner, admin, member, outcast, none
 	Affil string `xml:"affiliation,attr,omitempty"`
 	// moderator, participant, visitor, none
-	Role string `xml:"role,attr,omitempty"`
-	JID  string `xml:"jid,attr,omitempty"`
-	Nick string `xml:"nick,attr,omitempty"`
+	Role   string `xml:"role,attr,omitempty"`
+	JID    string `xml:"jid,attr,omitempty"`
+	Nick   string `xml:"nick,attr,omitempty"`
+	Reason string `xml:"reason,omitempty"`
+	Actor  Actor  `xml:"actor,omitempty"`
 }
 
 type X struct {
@@ -49,6 +56,7 @@ type Photo struct {
 	Photo   string   `xml:"photo,omitempty"`
 }
 
+// Reason common stanza for invite/decline
 type Reason struct {
 	From   string `xml:"from,attr,omitempty"`
 	To     string `xml:"to,attr,omitempty"`
