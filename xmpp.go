@@ -740,7 +740,7 @@ type ClientPresence struct {
 
 type ClientCaps struct {
 	XMLName xml.Name `xml:"http://jabber.org/protocol/caps c"`
-	Ext     string   `xml:"ext,attr"`
+	Ext     string   `xml:"ext,attr,omitempty"` // it is optional
 	Hash    string   `xml:"hash,attr"`
 	Node    string   `xml:"node,attr"`
 	Ver     string   `xml:"ver,attr"`
@@ -829,7 +829,7 @@ var defaultStorage = map[xml.Name]reflect.Type{
 
 type DiscoveryReply struct {
 	XMLName    xml.Name            `xml:"http://jabber.org/protocol/disco#info query"`
-	Node       string              `xml:"node"`
+	Node       string              `xml:"node,attr"`
 	Identities []DiscoveryIdentity `xml:"identity"`
 	Features   []DiscoveryFeature  `xml:"feature"`
 	Forms      []Form              `xml:"jabber:x:data x"`
