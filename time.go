@@ -38,6 +38,9 @@ func (r *TimeReply) String() string {
 // Format formating TimeReply with specified layout.
 // see: `godoc time` for Format examples.
 func (r *TimeReply) Format(layout string) string {
+	if len(r.UTC) > len(TimeTZ) {
+		r.UTC = r.UTC[0:len(TimeTZ)]
+	}
 	t, err := time.Parse(TimeTZ, r.UTC)
 	if err != nil {
 		return err.Error()
