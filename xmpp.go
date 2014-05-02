@@ -217,7 +217,7 @@ func (c *Conn) SendIQ(to, typ string, value interface{}) (reply chan Stanza, coo
 			return
 		}
 	}
-	if _, err = fmt.Fprintf(c.out, "</iq>"); err != nil {
+	if _, err = fmt.Fprint(c.out, "</iq>"); err != nil {
 		return
 	}
 
@@ -235,7 +235,7 @@ func (c *Conn) SendIQReply(to, typ, id string, value interface{}) error {
 			return err
 		}
 	}
-	_, err := fmt.Fprintf(c.out, "</iq>")
+	_, err := fmt.Fprint(c.out, "</iq>")
 	return err
 }
 
@@ -822,9 +822,9 @@ var defaultStorage = map[xml.Name]reflect.Type{
 	xml.Name{Space: NsBind, Local: "bind"}:       reflect.TypeOf(bindBind{}),
 	xml.Name{Space: NsClient, Local: "message"}:  reflect.TypeOf(ClientMessage{}),
 	xml.Name{Space: NsClient, Local: "presence"}: reflect.TypeOf(MUCPresence{}),
-//	xml.Name{Space: NsClient, Local: "presence"}: reflect.TypeOf(ClientPresence{}),
-	xml.Name{Space: NsClient, Local: "iq"}:       reflect.TypeOf(ClientIQ{}),
-	xml.Name{Space: NsClient, Local: "error"}:    reflect.TypeOf(ClientError{}),
+	// xml.Name{Space: NsClient, Local: "presence"}: reflect.TypeOf(ClientPresence{}),
+	xml.Name{Space: NsClient, Local: "iq"}:    reflect.TypeOf(ClientIQ{}),
+	xml.Name{Space: NsClient, Local: "error"}: reflect.TypeOf(ClientError{}),
 }
 
 type DiscoveryReply struct {

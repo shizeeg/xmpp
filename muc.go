@@ -143,7 +143,7 @@ func (c *Conn) JoinMUC(to, nick, password string) error {
 		"\n  </x>"+
 		"\n</presence>",
 		xmlEscape(c.jid), xmlEscape(to), xmlEscape(nick), NsMUC)
-	_, err := fmt.Fprintf(c.out, stanza)
+	_, err := fmt.Fprint(c.out, stanza)
 	return err
 }
 
@@ -159,9 +159,8 @@ func (c *Conn) LeaveMUC(confFullJID, status string) error {
 		return err
 	}
 	if len(status) > 0 {
-		_, err = fmt.Fprintf(c.out, ">"+
-			"<status>"+xmlEscape(status)+"</status>"+
-			"</presence>")
+		_, err = fmt.Fprint(c.out, ">\n<status>"+xmlEscape(status)+
+			"</status>\n</presence>")
 		return err
 	}
 	_, err = fmt.Fprint(c.out, " />")
@@ -184,7 +183,7 @@ func (c *Conn) DirectInviteMUC(to, jid, password, reason string) error {
 		"\n "+password+
 		"\n "+reason+" /></message>",
 		xmlEscape(c.jid), xmlEscape(to), xmlEscape(jid))
-	_, err := fmt.Fprintf(c.out, invite)
+	_, err := fmt.Fprint(c.out, invite)
 	return err
 }
 
@@ -196,6 +195,6 @@ func (c *Conn) SendMUC(to, typ, msg string) error {
 	cookie := c.getCookie()
 	stanza := fmt.Sprintf("<message from='%s' to='%s' type='%s' id='%x'><body>%s</body></message>",
 		xmlEscape(c.jid), xmlEscape(to), xmlEscape(typ), cookie, xmlEscape(msg))
-	_, err := fmt.Fprintf(c.out, stanza)
+	_, err := fmt.Fprint(c.out, stanza)
 	return err
 }
