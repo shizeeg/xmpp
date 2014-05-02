@@ -710,6 +710,7 @@ type ClientMessage struct {
 	Id      string   `xml:"id,attr"`
 	To      string   `xml:"to,attr"`
 	Type    string   `xml:"type,attr"` // chat, error, groupchat, headline, or normal
+	Lang    string   `xml:"lang,attr"`
 
 	// These should technically be []clientText,
 	// but string is much more convenient.
