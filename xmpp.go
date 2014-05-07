@@ -717,6 +717,13 @@ type ClientMessage struct {
 	Subject string `xml:"subject"`
 	Body    string `xml:"body"`
 	Thread  string `xml:"thread"`
+	Delay   Delay  `xml:"urn:xmpp:delay delay,omitempty"`
+}
+
+type Delay struct {
+	XMLName xml.Name `xml:"urn:xmpp:delay delay"`
+	From    string   `xml:"from,attr"`
+	Stamp   string   `xml:"stamp,attr"`
 }
 
 type ClientText struct {
@@ -730,7 +737,7 @@ type ClientPresence struct {
 	Id      string   `xml:"id,attr,omitempty"`
 	To      string   `xml:"to,attr,omitempty"`
 	Type    string   `xml:"type,attr,omitempty"` // error, probe, subscribe, subscribed, unavailable, unsubscribe, unsubscribed
-	Lang    string   `xml:"lang,attr,omitempty"`
+	Lang    string   `xml:"xml:lang,attr,omitempty"`
 
 	Show     string       `xml:"show,omitempty"`   // away, chat, dnd, xa
 	Status   string       `xml:"status,omitempty"` // sb []clientText
@@ -875,6 +882,14 @@ type FormFieldRequired struct {
 type FormFieldOption struct {
 	Label string   `xml:"var,attr,omitempty"`
 	Value []string `xml:"value"`
+}
+
+// IsDelayed checks if message comes from server's history log
+func (m *ClientMessage) IsDelayed() bool {
+	if m.Delay.XMLName.Space + " " + m.Delay.XMLName.Local == "urn:xmpp:delay delay" {
+		return true
+	}
+	return false
 }
 
 // VerificationString returns a SHA-1 verification string as defined in XEP-0115.
