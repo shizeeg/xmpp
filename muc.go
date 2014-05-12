@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	NsMUC       = "http://jabber.org/protocol/muc"
-	NsMUCUser   = "http://jabber.org/protocol/muc#user"
-	NsDiscoInfo = "http://jabber.org/protocol/disco#info"
+	NsMUC        = "http://jabber.org/protocol/muc"
+	NsMUCUser    = "http://jabber.org/protocol/muc#user"
+	NsDiscoInfo  = "http://jabber.org/protocol/disco#info"
+	NsDiscoItems = "http://jabber.org/protocol/disco#items"
 )
 
 const (
@@ -19,6 +20,10 @@ const (
 	RENAME = "303"
 	KICK   = "307"
 )
+
+type DiscoInfoReply struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/disco#items query"`
+}
 
 type Status struct {
 	// XMLName xml.Name `xml:"status"`
@@ -38,17 +43,18 @@ type Item struct {
 	JID    string `xml:"jid,attr,omitempty"`
 	Nick   string `xml:"nick,attr,omitempty"`
 	Reason string `xml:"reason,omitempty"`
-	Actor  Actor  `xml:"actor,omitempty"`
+	Actor  *Actor `xml:"actor,omitempty"`
 }
 
 type X struct {
-	XMLName  xml.Name `xml:"http://jabber.org/protocol/muc#user x"`
-	Items    []Item   `xml:"item,omitempty"`
-	Statuses []Status `xml:"status,omitempty"`
-	Decline  Reason   `xml:"decline,omitempty"`
-	Invite   Reason   `xml:"invite,omitempty"`
-	Destroy  XDestroy `xml:"destroy,omitempty"`
-	Password string   `xml:"password,omitempty"`
+	XMLName  xml.Name  // `xml:"http://jabber.org/protocol/muc#user x"`
+	Password string    `xml:"password,omitempty"`
+	Items    []*Item   `xml:"item,omitempty"`
+	Statuses []*Status `xml:"status,omitempty"`
+	Decline  *Reason   `xml:"decline,omitempty"`
+	Invite   *Reason   `xml:"invite,omitempty"`
+	Destroy  *Destroy  `xml:"destroy,omitempty"`
+	History  *History  `xml:"history,omitempty"`
 }
 
 type Photo struct {
@@ -63,29 +69,39 @@ type Reason struct {
 	Reason string `xml:"reason,omitempty"`
 }
 
-type XDestroy struct {
+type Destroy struct {
 	JID    string `xml:"jid,attr,omitempty"`
 	Reason string `xml:"reason,omitempty"`
+}
+
+type History struct {
+	MaxChars   string `xml:"maxchars,attr,omitempty"`
+	MaxStanzas string `xml:"maxstanzas,attr,omitempty"`
+	Seconds    string `xml:"seconds,attr,omitempty"`
+	// Send only the messages received since the UTC datetime specified
+	// (which MUST conform to the DateTime profile specified in XMPP Date
+	// and Time Profiles (XEP-0082) [17]).
+	Since string `xml:"since,attr,omitempty"`
 }
 
 // http://xmpp.org/extensions/xep-0045.html
 // <presence />
 type MUCPresence struct {
 	XMLName xml.Name `xml:"presence"`
-	Lang    string   `xml:"lang,attr,omitempty"`
+	Lang    string   `xml:"xml:lang,attr,omitempty"`
 	From    string   `xml:"from,attr,omitempty"`
 	To      string   `xml:"to,attr,omitempty"`
-	Id      string   `xml:"id.attr,omitempty"`
+	Id      string   `xml:"id,attr,omitempty"`
 	Type    string   `xml:"type,attr,omitempty"`
 
-	X     []X   `xml:"http://jabber.org/protocol/muc#user x,omitempty"`
-	Photo Photo `xml:"vcard-temp:x:update x"` // http://xmpp.org/extensions/xep-0153.html
+	X     []*X   `xml:"http://jabber.org/protocol/muc#user x,omitempty"`
+	Photo *Photo `xml:"vcard-temp:x:update x,omitempty"` // http://xmpp.org/extensions/xep-0153.html
 
 	Show     string       `xml:"show,omitempty"`   // away, chat, dnd, xa
 	Status   string       `xml:"status,omitempty"` // sb []clientText
 	Priority string       `xml:"priority,omitempty"`
 	Caps     *ClientCaps  `xml:"c"`
-	Error    *ClientError `xml:"error"`
+	Error    *ClientError `xml:"error,omitempty"`
 }
 
 // IsCode checks if MUCPresence contains given code
